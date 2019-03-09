@@ -58,3 +58,21 @@ void print_list(struct singly_linked_list *list) {
     }
     printf("]");
 }
+
+bool findMTF(struct singly_linked_list *list, int value) {
+    struct node *tmp_prev = NULL;
+    struct node *tmp_curr = list->head;
+    while (tmp_curr != NULL) {
+        if (tmp_curr->value == value) {
+            if (tmp_prev != NULL) {
+                tmp_prev->next = tmp_curr->next;
+            }
+            tmp_curr->next = list->head;
+            list->head = tmp_curr;
+            return true;
+        }
+        tmp_prev = tmp_curr;
+        tmp_curr = tmp_curr->next;  
+    }
+    return false;
+}

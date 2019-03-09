@@ -47,8 +47,8 @@ bool is_empty(struct singly_linked_list *list);
 bool findMTF(struct singly_linked_list *list, int value);
 
 /**
- * Checks if given element is present in the list, if it is, the element is move one place forward 
- * (closer to the beginning of the list)
+ * Checks if given element is present in the list, if it is, the element is moved one place forward 
+ * (closer to the beginning of the list), if found element is the head, nothing happens after checking 
  *
  * @param list A pointer to the list 
  * @param value Value to be found
