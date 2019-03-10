@@ -76,3 +76,30 @@ bool findMTF(struct singly_linked_list *list, int value) {
     }
     return false;
 }
+
+bool findTRANS(struct singly_linked_list *list, int value) {
+    struct node *tmp_prev = NULL;
+    struct node *tmp_prev_prev = NULL;
+    struct node *tmp_curr = list->head;
+    while (tmp_curr != NULL) {
+        if (tmp_curr->value == value) {
+            if (tmp_prev == NULL && tmp_prev_prev == NULL) { //head
+                return true;
+            } else if (tmp_prev != NULL && tmp_prev_prev == NULL) {//one after head 
+                list->head = tmp_curr;
+                tmp_prev->next = tmp_curr->next;
+                tmp_curr->next = tmp_prev;
+                return true;
+            } else { //more than 2 forward
+                tmp_prev_prev->next = tmp_curr;
+                tmp_prev->next = tmp_curr->next;
+                tmp_curr->next = tmp_prev;
+                return true;
+            }
+        }
+        tmp_prev_prev = tmp_prev;
+        tmp_prev = tmp_curr;
+        tmp_curr = tmp_curr->next;  
+    }
+    return false;
+}

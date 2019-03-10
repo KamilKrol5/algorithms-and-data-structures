@@ -38,7 +38,8 @@ bool remove_all(struct singly_linked_list *list, int value);
 bool is_empty(struct singly_linked_list *list);
 
 /**
- * Checks if given element is present in the list, if it is, the element is taken at the beginning of the list
+ * Checks if given element is present in the list, if it is, the element is taken to the beginning of the list
+ * If there are multiple same-valued elements only the first is taken to the beginning
  * 
  * @param list A pointer to the list 
  * @param value Value to be found
@@ -49,6 +50,7 @@ bool findMTF(struct singly_linked_list *list, int value);
 /**
  * Checks if given element is present in the list, if it is, the element is moved one place forward 
  * (closer to the beginning of the list), if found element is the head, nothing happens after checking 
+ * If there are multiple same-valued elements only the first is moved one place forward
  *
  * @param list A pointer to the list 
  * @param value Value to be found
