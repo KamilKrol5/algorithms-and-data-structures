@@ -30,6 +30,7 @@ bool remove_all(struct singly_linked_list *list, int value) {
     struct node *tmp_prev = NULL;
     struct node *tmp_curr = list->head;
     while (tmp_curr != NULL) {
+        number_of_comparisons++;
         if (tmp_curr->value == value) {
             return_val = true;
             if (tmp_prev != NULL) {
@@ -56,17 +57,19 @@ void print_list(struct singly_linked_list *list) {
         printf("%d ", tmp_curr->value);
         tmp_curr = tmp_curr->next;  
     }
-    printf("]");
+    printf("]\n");
 }
 
 bool findMTF(struct singly_linked_list *list, int value) {
     struct node *tmp_prev = NULL;
     struct node *tmp_curr = list->head;
     while (tmp_curr != NULL) {
+        number_of_comparisons++;
         if (tmp_curr->value == value) {
-            if (tmp_prev != NULL) {
-                tmp_prev->next = tmp_curr->next;
+            if (tmp_prev == NULL) {
+                return true;
             }
+            tmp_prev->next = tmp_curr->next;
             tmp_curr->next = list->head;
             list->head = tmp_curr;
             return true;
@@ -82,6 +85,7 @@ bool findTRANS(struct singly_linked_list *list, int value) {
     struct node *tmp_prev_prev = NULL;
     struct node *tmp_curr = list->head;
     while (tmp_curr != NULL) {
+        number_of_comparisons++;
         if (tmp_curr->value == value) {
             if (tmp_prev == NULL && tmp_prev_prev == NULL) { //head
                 return true;
