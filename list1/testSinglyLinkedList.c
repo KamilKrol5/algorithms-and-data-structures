@@ -2,7 +2,8 @@
 #include <time.h>
 #include <stdlib.h>
 
-const int amount = 1000;
+const int amount = 100;
+const int number_of_tests = 1000;
 
 void shuffle(int *array, int size)
 {
@@ -24,10 +25,11 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
     struct singly_linked_list my_list = { NULL };
     insert(&my_list,5);
-    remove_all(&my_list,5);
+    insert(&my_list,5);
+    remove_first(&my_list,5);
     print_list(&my_list);
     printf("\n");
-    // insert(&my_list,7);
+    insert(&my_list,7);
     // insert(&my_list,6);
     // insert(&my_list,125);
     // insert(&my_list,0);
@@ -72,6 +74,10 @@ int main(int argc, char const *argv[])
 
     //prepare data
     int array[amount];
+    double avgMTF = 0;
+    double avgTRANS =0;
+
+    for (int j=0; j < number_of_tests;j++) {
     struct singly_linked_list test_list = { NULL };
     for (int i=0;i < amount;i++) {
         array[i]=i+1;
@@ -80,7 +86,7 @@ int main(int argc, char const *argv[])
     for (int i=0;i < amount;i++) {
         insert(&test_list,array[i]);
     }
-    print_list(&test_list);
+    //print_list(&test_list);
 
     //test MTF
     int max;
@@ -96,8 +102,10 @@ int main(int argc, char const *argv[])
         }
         remove_all(&test_list,max);
     }
-    printf("Comparisons (MTF): %d\n",number_of_comparisons);
+    //printf("Comparisons (MTF): %d\n",number_of_comparisons);
+    avgMTF+= number_of_comparisons / amount;
     number_of_comparisons=0;
+    
 
     //prepare data
     for (int i=0;i < amount;i++) {
@@ -116,9 +124,12 @@ int main(int argc, char const *argv[])
         }
         remove_all(&test_list,max);
     }
-    printf("Comparisons (TRANS): %d\n",number_of_comparisons);
+    //printf("Comparisons (TRANS): %d\n",number_of_comparisons);
+    avgTRANS+= number_of_comparisons / amount;
     number_of_comparisons=0;
-
+}
+    printf("Average number of comparisons (MTF): %f\n",avgMTF);
+    printf("Average number of comparisons (TRANS): %f\n",avgTRANS);
     return 0;
 }
 

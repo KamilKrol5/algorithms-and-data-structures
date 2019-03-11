@@ -30,6 +30,16 @@ void insert(struct singly_linked_list *list, int value);
 bool remove_all(struct singly_linked_list *list, int value);
 
 /**
+ * Delete operation on singly linked list, it removes only first occurence of this value
+ * 
+ * @param list A pointer to the list
+ * @param value Value to be removed
+ * @return true if value was present in the list and was successfully removed, 
+ *         false if value was not present in the list
+ */
+bool remove_first(struct singly_linked_list *list, int value);
+
+/**
  * Tell if a list is empty
  * 
  * @param list A pointer to the list

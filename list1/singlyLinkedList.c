@@ -50,6 +50,30 @@ bool remove_all(struct singly_linked_list *list, int value) {
     return return_val;
 }
 
+bool remove_first(struct singly_linked_list *list, int value) {
+    struct node *tmp_prev = NULL;
+    struct node *tmp_curr = list->head;
+    while (tmp_curr != NULL) {
+        number_of_comparisons++;
+        if (tmp_curr->value == value) {
+            if (tmp_prev != NULL) {
+                tmp_prev->next = tmp_curr->next;
+                return true;
+            } 
+            else {
+                list->head = list->head->next;
+                // tmp_prev = NULL;
+                // tmp_curr = list->head;
+                return true;           
+            }
+            
+        }
+        tmp_prev = tmp_curr;
+        tmp_curr = tmp_curr->next;  
+    }
+    return false;
+}
+
 void print_list(struct singly_linked_list *list) {
     struct node *tmp_curr = list->head;
     printf("[ ");
