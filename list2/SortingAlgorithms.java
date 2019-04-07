@@ -1,17 +1,14 @@
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 class SortingAlgorithms {
     private Boolean isSilentMode = false;
     private Boolean descending = false;
+    private long numberOfSwaps = 0;
     Comparator<Integer> comparator;
 
-    SortingAlgorithms(Boolean isSilentMode, Boolean descending) {
-        if (descending)
-            comparator = new CountingComparator<Integer>(Comparator.reverseOrder(), isSilentMode);
-        else
-            comparator = new CountingComparator<Integer>(Comparator.naturalOrder(), isSilentMode);
-
+    SortingAlgorithms(Boolean isSilentMode, Comparator<Integer> comparator) {
+        this.comparator = comparator;
+        this.isSilentMode = isSilentMode;
     }
 
     void selectSort(List<Integer> data) {
@@ -20,7 +17,7 @@ class SortingAlgorithms {
         Integer tmp;
         for (int i = 0; i < data.size(); i++) {
             var pair = findMin(data.subList(i, data.size()));
-            swap(data,i,pair.getFirst() + i);
+            swap(data, i, pair.getFirst() + i);
         }
 
     }
@@ -29,10 +26,10 @@ class SortingAlgorithms {
         if (data.isEmpty())
             return;
         for (int i = 1; i < data.size(); i++) {
-            for (int j = i-1; j >= 0; j--) {
-                if (comparator.compare(data.get(j+1),data.get(j)) >= 0) //larger
+            for (int j = i - 1; j >= 0; j--) {
+                if (comparator.compare(data.get(j + 1), data.get(j)) >= 0) //larger
                     break;
-                swap(data,j,j+1);
+                swap(data, j, j + 1);
             }
         }
     }
@@ -41,31 +38,31 @@ class SortingAlgorithms {
         makeHeap(data);
         int size = data.size();
         for (int j = 0; j < data.size(); j++) {
-            swap(data,size-j-1,0);
-            siftDown(data.subList(0,size-j-1), 0);
+            swap(data, size - j - 1, 0);
+            siftDown(data.subList(0, size - j - 1), 0);
         }
     }
 
 
     void quickSort(List<Integer> data) {
-        if (data.size() >=  1){
+        if (data.size() >= 1) {
             int pivot = data.get(data.size() - 1);
             int limit = 0;
-            for (int i = 0; i < data.size()-1; i++) {
-                if ( comparator.compare(pivot,data.get(i)) >= 0) {
-                    swap(data,limit,i);
+            for (int i = 0; i < data.size() - 1; i++) {
+                if (comparator.compare(pivot, data.get(i)) >= 0) {
+                    swap(data, limit, i);
                     limit++;
                 }
             }
-            swap(data,data.size() - 1,limit);
-            quickSort(data.subList(0,limit));
-            quickSort(data.subList(limit+1,data.size()));
+            swap(data, data.size() - 1, limit);
+            quickSort(data.subList(0, limit));
+            quickSort(data.subList(limit + 1, data.size()));
         }
     }
 
     public void modifiedQuickSort(List<Integer> list) {
         int size = list.size();
-        if (size >=  1){
+        if (size >= 1) {
             if (size > 16) {
                 int pivotIndex = getMedianIndex(list, 0, size / 2 - 1, size - 1);
                 int pivot = list.get(pivotIndex);
@@ -87,15 +84,18 @@ class SortingAlgorithms {
     }
 
     private void swap(List<Integer> list, int index1, int index2) {
+        numberOfSwaps++;
+        if (!isSilentMode)
+            System.err.printf("Swapping %s with %s\n",list.get(index1).toString(),list.get(index2).toString());
         Integer tmp = list.get(index1);
-        list.set(index1,list.get(index2));
-        list.set(index2,tmp);
+        list.set(index1, list.get(index2));
+        list.set(index2, tmp);
     }
 
     private void makeHeap(List<Integer> data) {
         int i = data.size() / 2 - 1;
         for (int k = i; k >= 0; k--) {
-            siftDown(data,k);
+            siftDown(data, k);
         }
     }
 
@@ -108,31 +108,31 @@ class SortingAlgorithms {
             leftChild = 2 * currentIndex + 1;
             rightChild = leftChild + 1;
 
-            if (leftChild < size && comparator.compare(list.get(leftChild),list.get(currentIndex)) > 0)
+            if (leftChild < size && comparator.compare(list.get(leftChild), list.get(currentIndex)) > 0)
                 currentIndex = leftChild;
-            if (rightChild < size && comparator.compare(list.get(rightChild),list.get(currentIndex)) > 0)
+            if (rightChild < size && comparator.compare(list.get(rightChild), list.get(currentIndex)) > 0)
                 currentIndex = rightChild;
 
             if (currentIndex == index)
                 return;
 
-            swap(list,currentIndex,index);
+            swap(list, currentIndex, index);
 
             index = currentIndex;
         }
     }
 
-    public int getMedianIndex(List<Integer> list, Integer i1,Integer i2,Integer i3) {
+    public int getMedianIndex(List<Integer> list, Integer i1, Integer i2, Integer i3) {
         int x = list.get(i1);
         int y = list.get(i2);
         int z = list.get(i3);
-        if (comparator.compare(x,y) >=0) {
+        if (comparator.compare(x, y) >= 0) {
             if (comparator.compare(y, z) >= 0) return i2;
-            else if (comparator.compare(x,z) >= 0) return i3;
+            else if (comparator.compare(x, z) >= 0) return i3;
             else return i1;
         } else {
-            if (comparator.compare(x,z) >= 0) return i1;
-            else if (comparator.compare(y,z) >= 0) return i3;
+            if (comparator.compare(x, z) >= 0) return i1;
+            else if (comparator.compare(y, z) >= 0) return i3;
             else return i2;
         }
     }
@@ -149,5 +149,13 @@ class SortingAlgorithms {
             }
             return new Pair<>(indexOfMin, min);
         } else return null;
+    }
+
+    public long getNumberOfSwaps() {
+        return numberOfSwaps;
+    }
+
+    public void resetNumberOfSwaps() {
+        numberOfSwaps = 0;
     }
 }

@@ -1,7 +1,7 @@
 import java.util.Comparator;
 
 public class CountingComparator<T> implements Comparator<T> {
-    private int count;
+    private long count;
     private Comparator<T> comparator;
     private Boolean isSilent;
 
@@ -17,7 +17,7 @@ public class CountingComparator<T> implements Comparator<T> {
         return comparator.compare(o1, o2);
     }
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 
