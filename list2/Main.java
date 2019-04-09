@@ -1,5 +1,4 @@
 import java.io.*;
-import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -68,6 +67,10 @@ public class Main {
             while (true) {
                 if (scanner.hasNextInt()) {
                     numberOfArguments = scanner.nextInt();
+                    if (numberOfArguments <= 0) {
+                        System.out.println("Given argument is not a positive number!");
+                        return;
+                    }
                     break;
                 } else {
                     System.out.println("Given argument is not a number!");
@@ -107,7 +110,7 @@ public class Main {
             so.resetNumberOfSwaps();
             checkSorting(numbers, ascending, countingComparator);
             countingComparator.resetCount();
-            System.err.println("Time of sorting: " + durationInMilliseconds + " milliseconds (with " + args[1] + " algorithm)");
+            System.err.println("Time of sorting: " + durationInMilliseconds + " milliseconds (with chosen algorithm)");
             System.out.println("Number of sorted elements: " + numberOfArguments);
             System.out.println(numbers.toString());
         } else {
@@ -133,7 +136,7 @@ public class Main {
             }
         }
         var finishTimeMain = System.nanoTime();
-        System.out.println("Time: "+ TimeUnit.NANOSECONDS.toMillis(finishTimeMain - startTimeMain));
+        System.out.println("Time: "+ TimeUnit.NANOSECONDS.toMillis(finishTimeMain - startTimeMain)+" milliseconds");
     }
 
     private static void doSortingForStatistics(SortingAlgorithms so, CountingComparator<Integer> countingComparator,
