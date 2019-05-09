@@ -38,8 +38,8 @@ public class MainDijkstra {
                 System.out.print("destination: ");
                 int v = scanner.nextInt();
                 System.out.print("weight: ");
-                Integer w = scanner.nextInt();
-                edges.add(new GraphEdge(new Vertex(u), new Vertex(v), w.doubleValue()));
+                Double w = scanner.nextDouble();
+                edges.add(new GraphEdge(new Vertex(u), new Vertex(v), w));
             }
 
             graph = new DirectedGraph(vertices, edges);

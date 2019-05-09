@@ -59,12 +59,17 @@ public class KruskalPrimMain {
         graph = new UndirectedGraph(vertices, edges);
         UndirectedGraph mst;
         if (mode.equals(Mode.KRUSKAL)) {
+            var tS = System.nanoTime();
             kruskal = new Kruskal(graph);
             mst = kruskal.findMST();
-
+            var tE = System.nanoTime();
+            System.out.println("TIME: " + (tE - tS));
         } else {
+            var tS = System.nanoTime();
             prim = new Prim(graph);
             mst = prim.findMST();
+            var tE = System.nanoTime();
+            System.out.println("TIME: " + (tE - tS));
         }
         System.out.println();
         System.out.println(mst);

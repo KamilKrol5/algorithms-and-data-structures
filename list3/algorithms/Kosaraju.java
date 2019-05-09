@@ -46,27 +46,27 @@ public class Kosaraju {
         unvisited.remove(v);
         for (GraphEdge e : graph.getEdges().get(v)) {
             var u = e.getEnd();
-            if (u.equals(v)) {
-                continue;
-                //u = e.getStart();
-            }
+//            if (u.equals(v)) {
+//                continue;
+//                //u = e.getStart();
+//            }
             if (unvisited.contains(u)) {
                 DFSstack(u, unvisited, stack);
             }
-            stack.push(u);
+            stack.push(v);
         }
     }
 
-    private void DFSBuild(Vertex v, Set<Vertex> unvisited, Set<Vertex> resultSet, DirectedGraph graph) {
+    private void DFSBuild(Vertex v, Set<Vertex> unvisited, Set<Vertex> resultSet, DirectedGraph graph1) {
         unvisited.remove(v);
         resultSet.add(v);
-        for (GraphEdge e : graph.getEdges().get(v)) {
+        for (GraphEdge e : graph1.getEdges().get(v)) {
             var u = e.getEnd();
             if (u.equals(v)) {
                 u = e.getStart();
             }
             if (unvisited.contains(u)) {
-                DFSBuild(u, unvisited, resultSet, graph);
+                DFSBuild(u, unvisited, resultSet, graph1);
             }
         }
     }

@@ -15,7 +15,7 @@ public class DirectedGraph implements Graph{
             this.edges.put(vertices.get(i), new ArrayList<>());
         }
         for (GraphEdge e : edges) {
-            if (!this.edges.get(e.getStart()).contains(e)) {
+            if ((this.edges.get(e.getStart()) != null) && !(this.edges.get(e.getStart()).contains(e))) {
                 this.edges.get(e.getStart()).add(e);
             }
         }

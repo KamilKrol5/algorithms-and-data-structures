@@ -40,10 +40,12 @@ public class KosarajuMain {
             Integer w = scanner.nextInt();
             edges.add(new GraphEdge(new Vertex(u), new Vertex(v), w.doubleValue()));
         }
-
+        var tS = System.nanoTime();
         graph = new DirectedGraph(vertices, edges);
         kosaraju = new Kosaraju(graph);
+        var tE = System.nanoTime();
         System.out.println();
+        System.out.println("TIME: "+ (tE - tS));
     }
 
     private static void print() {
@@ -57,3 +59,7 @@ public class KosarajuMain {
         System.out.println(builder.toString());
     }
 }
+// e log v
+// e log v lub v2(list) prim
+// e log v krusk
+// e + v kosr
