@@ -97,7 +97,7 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
                     } else {
                         previous.right = currentNode.right;
                     }
-                } else if (currentNode.left != null && currentNode.right == null) {
+                } else if ( currentNode.right == null) { // && currentNode.left != null
                     if (leftPath) {
                         previous.left = currentNode.left;
                     } else {
@@ -127,6 +127,23 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
                 leftPath = false;
                 previous = currentNode;
                  currentNode = currentNode.right;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean searchImpl(T element) {
+        var currentNode = root;
+        while (currentNode != null) {
+            var compareResult = getComparator().compare(element, currentNode.key);
+            if (compareResult == 0) {
+                return true;
+            }
+            if (compareResult < 0) {
+                currentNode = currentNode.left;
+            } else {
+                currentNode = currentNode.right;
             }
         }
         return false;

@@ -38,7 +38,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
             maximumNumberOfElements = currentNumberOfElements
     }
 
-    public final override fun insert(element: T) {
+    final override fun insert(element: T) {
         if (insertImpl(element)) {
             updateNumberOfElements(1)
         }
@@ -46,7 +46,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
 
     protected abstract fun insertImpl(element: T): Boolean
 
-    public final override fun delete(element: T) {
+    final override fun delete(element: T) {
         if (deleteImpl(element)) {
             updateNumberOfElements(-1)
         }
@@ -58,35 +58,21 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
         return currentNumberOfElements == 0
     }
 
-    public final override fun search(element: T): Boolean {
+    final override fun search(element: T): Boolean {
         numberOfSearches++
         return searchImpl(element)
     }
 
-    private fun searchImpl(element: T): Boolean {
-        var currentNode: Node<T>? = root
-        while (currentNode != null) {
-            val compareResult = comparator.compare(element, currentNode.key)
-            if (compareResult == 0) {
-                return true
-            }
-            currentNode = if (compareResult < 0) {
-                currentNode.left
-            } else {
-                currentNode.right
-            }
-        }
-        return false
-    }
+    protected abstract fun searchImpl(element: T): Boolean
 
-    public final override fun load(file: File) {
+    final override fun load(file: File) {
         numberOfLoads++
         loadImpl(file)
     }
 
     protected abstract fun loadImpl(file: File)
 
-    public final override fun inOrder(): List<T> {
+    final override fun inOrder(): List<T> {
         numberOfInOrders++
         return inOrderImpl()
     }
@@ -98,7 +84,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
             var nonNulls = 0
             var k = 0
             while (!queue.isEmpty() && nonNulls < currentNumberOfElements) {
-                var n = queue.remove()
+                val n = queue.remove()
                 append(" ")
                 append(n.toString())
                 append(" ")
