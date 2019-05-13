@@ -3,7 +3,9 @@ package structures
 import utility.CountingComparator
 
 import java.io.File
+import java.io.IOException
 import java.util.*
+import java.util.function.Function
 
 abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
 
@@ -65,12 +67,13 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
 
     protected abstract fun searchImpl(element: T): Boolean
 
-    final override fun load(file: File) {
+    final override fun load(file: File, fromString : Function<String, T>, delimiterPattern: String) {
         numberOfLoads++
-        loadImpl(file)
+        loadImpl(file, fromString, delimiterPattern)
     }
 
-    protected abstract fun loadImpl(file: File)
+    @Throws(IOException::class)
+    protected abstract fun loadImpl(file: File, fromString : Function<String, T>, delimiterPattern: String)
 
     final override fun inOrder(): List<T> {
         numberOfInOrders++

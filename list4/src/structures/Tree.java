@@ -2,12 +2,13 @@ package structures;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Function;
 
 public interface Tree <T extends Comparable<T>> {
-    public void insert(T element);
-    public void delete(T element);
-    public boolean search(T element);
-    public boolean isEmpty();
-    public void load(File file);
-    public List<T> inOrder();
+    void insert(T element);
+    void delete(T element);
+    boolean search(T element);
+    boolean isEmpty();
+    void load(File file, Function<String, T> fromString, String delimiterPattern);
+    List<T> inOrder();
 }
