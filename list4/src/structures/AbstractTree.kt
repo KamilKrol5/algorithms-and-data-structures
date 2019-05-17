@@ -9,7 +9,7 @@ import java.util.function.Function
 abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
 
     protected interface Node<T> {
-        val key: T
+        var key: T
         val left: Node<T>?
         val right: Node<T>?
     }
@@ -66,13 +66,13 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
 
     protected abstract fun searchImpl(element: T): Boolean
 
-    final override fun load(file: File, fromString : Function<String, T>, delimiterPattern: String) {
+    final override fun load(file: File, fromString: Function<String, T>, delimiterPattern: String) {
         numberOfLoads++
         loadImpl(file, fromString, delimiterPattern)
     }
 
     @Throws(IOException::class)
-    protected fun loadImpl(file: File, fromString : Function<String, T>, delimiterPattern: String) {
+    protected fun loadImpl(file: File, fromString: Function<String, T>, delimiterPattern: String) {
         if (file.canRead()) {
             try {
                 val fileReader = FileReader(file)
@@ -134,5 +134,11 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
         orderNode(list, node.left)
         list.add(node.key)
         orderNode(list, node.right)
+    }
+
+    protected fun swapKeys(node1: Node<T>, node2: Node<T>) {
+        val tmp = node1.key
+        node1.key = node2.key
+        node2.key = tmp
     }
 }

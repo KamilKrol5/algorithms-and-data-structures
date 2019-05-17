@@ -31,8 +31,13 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
         }
 
         @Override
-        public String toString()  {
+        public String toString() {
             return key.toString();
+        }
+
+        @Override
+        public void setKey(T t) {
+            this.key = t;
         }
     }
 
@@ -99,7 +104,7 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
                     } else {
                         previous.right = currentNode.right;
                     }
-                } else if ( currentNode.right == null) { // && currentNode.left != null
+                } else if (currentNode.right == null) { // && currentNode.left != null
                     if (leftPath) {
                         previous.left = currentNode.left;
                     } else {
@@ -124,11 +129,11 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
             if (compareResult < 0) {
                 leftPath = true;
                 previous = currentNode;
-                 currentNode = currentNode.left;
+                currentNode = currentNode.left;
             } else {
                 leftPath = false;
                 previous = currentNode;
-                 currentNode = currentNode.right;
+                currentNode = currentNode.right;
             }
         }
         return false;
@@ -151,22 +156,14 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
         return false;
     }
 
-    private void swapKeys(BSTNode node1, BSTNode node2) {
-        T tmp = node1.key;
-        node1.key = node2.key;
-        node2.key = tmp;
-    }
-
     private BSTNode findMinKeyParent(BSTNode startNode) {
         if (startNode.left == null) {
             return null;
-        } else if (startNode.left.left == null){
+        } else if (startNode.left.left == null) {
             return startNode;
         } else {
             return findMinKeyParent(startNode.left);
         }
-
-
     }
 
 //    @Override

@@ -40,6 +40,11 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
         public String toString() {
             return key.toString();
         }
+
+        @Override
+        public void setKey(T t) {
+            this.key = t;
+        }
     }
 
     private SplayNode root = null;
@@ -76,7 +81,7 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
                     return true;
                 }
                 if (!checkParents(currentNode))
-                    System.err.println("INCORRECT PARENTS (for value " + currentNode.key +")");
+                    System.err.println("INCORRECT PARENTS (for value " + currentNode.key + ")");
                 currentNode = currentNode.getRight();
             }
         }
@@ -167,12 +172,6 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
         return false;
     }
 
-    private void swapKeys(SplayNode node1, SplayNode node2) {
-        T tmp = node1.key;
-        node1.key = node2.key;
-        node2.key = tmp;
-    }
-
     private SplayNode findMinKeyParent(SplayNode startNode) {
         if (startNode.left == null) {
             return null;
@@ -203,6 +202,7 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     private void leftRotation(SplayNode node) {
         SplayNode grandParent = node.parent.parent;
         SplayNode temp = node.left;
@@ -229,6 +229,7 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     private void rightRotation(SplayNode node) {
         SplayNode grandParent = node.parent.parent;
         SplayNode temp = node.right;
