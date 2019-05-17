@@ -1,9 +1,8 @@
 package structures
 
 import utility.CountingComparator
+import java.io.*
 
-import java.io.File
-import java.io.IOException
 import java.util.*
 import java.util.function.Function
 
@@ -73,7 +72,27 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
     }
 
     @Throws(IOException::class)
-    protected abstract fun loadImpl(file: File, fromString : Function<String, T>, delimiterPattern: String)
+    protected fun loadImpl(file: File, fromString : Function<String, T>, delimiterPattern: String) {
+        if (file.canRead()) {
+            try {
+                val fileReader = FileReader(file)
+                val bufferedReader = BufferedReader(fileReader)
+                val scanner = Scanner(bufferedReader)
+                scanner.useDelimiter(delimiterPattern) //"\\W+"
+                var token: String
+                while (scanner.hasNext()) {
+                    token = scanner.next()
+                    insert(fromString.apply(token))
+                }
+                bufferedReader.close()
+            } catch (e: FileNotFoundException) {
+                throw FileNotFoundException("Cannot find file" + file.name)
+            } catch (e: IOException) {
+                throw IOException()
+            }
+
+        }
+    }
 
     final override fun inOrder(): List<T> {
         numberOfInOrders++

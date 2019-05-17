@@ -169,28 +169,25 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
 
     }
 
-
-    @Override
-    protected void loadImpl(File file, Function<String, T> fromString, String delimiterPattern) throws IOException {
-        if (file.canRead()) {
-            try {
-                FileReader fileReader = new FileReader(file);
-                BufferedReader bufferedReader = new BufferedReader(fileReader);
-                Scanner scanner = new Scanner(bufferedReader);
-                scanner.useDelimiter(delimiterPattern); //"\\W+"
-                String token;
-                while (scanner.hasNext()) {
-                    token = scanner.next();
-                    insert(fromString.apply(token));
-                }
-                bufferedReader.close();
-            } catch (FileNotFoundException e) {
-                throw new FileNotFoundException("Cannot find file" + file.getName());
-            } catch (IOException e) {
-                throw new IOException();
-            }
-        }
-    }
-
-
+//    @Override
+//    protected void loadImpl(File file, Function<String, T> fromString, String delimiterPattern) throws IOException {
+//        if (file.canRead()) {
+//            try {
+//                FileReader fileReader = new FileReader(file);
+//                BufferedReader bufferedReader = new BufferedReader(fileReader);
+//                Scanner scanner = new Scanner(bufferedReader);
+//                scanner.useDelimiter(delimiterPattern); //"\\W+"
+//                String token;
+//                while (scanner.hasNext()) {
+//                    token = scanner.next();
+//                    insert(fromString.apply(token));
+//                }
+//                bufferedReader.close();
+//            } catch (FileNotFoundException e) {
+//                throw new FileNotFoundException("Cannot find file" + file.getName());
+//            } catch (IOException e) {
+//                throw new IOException();
+//            }
+//        }
+//    }
 }
