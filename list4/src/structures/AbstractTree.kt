@@ -17,23 +17,23 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
     protected abstract val root: Node<T>?
 
     protected val comparator = CountingComparator(Comparator.naturalOrder<T>())
-    var maximumNumberOfElements = 0
+    var maximumNumberOfElements: Long = 0
         private set
-    var currentNumberOfElements = 0
+    var currentNumberOfElements: Long = 0
         private set
-    var numberOfInserts = 0
+    var numberOfInserts: Long = 0
         private set
-    var numberOfDeletions = 0
+    var numberOfDeletions: Long = 0
         private set
-    var numberOfSearches = 0
+    var numberOfSearches: Long = 0
         private set
-    var numberOfLoads = 0
+    var numberOfLoads: Long = 0
         private set
-    var numberOfInOrders = 0
+    var numberOfInOrders: Long = 0
         private set
     val numberOfComparisons get() = comparator.count
 
-    private fun updateNumberOfElements(change: Int) {
+    private fun updateNumberOfElements(change: Long) {
         currentNumberOfElements += change
         if (maximumNumberOfElements < currentNumberOfElements)
             maximumNumberOfElements = currentNumberOfElements
@@ -56,7 +56,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
     protected abstract fun deleteImpl(element: T): Boolean
 
     override fun isEmpty(): Boolean {
-        return currentNumberOfElements == 0
+        return currentNumberOfElements == 0L
     }
 
     final override fun search(element: T): Boolean {
