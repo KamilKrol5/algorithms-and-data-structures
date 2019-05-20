@@ -39,9 +39,21 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
             maximumNumberOfElements = currentNumberOfElements
     }
 
+    fun resetStatistics() {
+        maximumNumberOfElements= 0
+        currentNumberOfElements= 0
+        numberOfInserts= 0
+        numberOfDeletions= 0
+        numberOfSearches= 0
+        numberOfLoads= 0
+        numberOfInOrders= 0
+        comparator.resetCount()
+    }
+
     final override fun insert(element: T) {
         if (insertImpl(element)) {
             updateNumberOfElements(1)
+            numberOfInserts++
         }
     }
 
@@ -50,6 +62,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
     final override fun delete(element: T) {
         if (deleteImpl(element)) {
             updateNumberOfElements(-1)
+            numberOfDeletions++
         }
     }
 
@@ -123,7 +136,7 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
         }
     }
 
-    private fun inOrderImpl(): List<T> {
+    protected open fun inOrderImpl(): List<T> {
         val resultList = mutableListOf<T>()
         orderNode(resultList, root)
         return resultList
