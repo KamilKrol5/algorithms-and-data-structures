@@ -1,9 +1,5 @@
 package structures;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.function.Function;
-
 public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
 
     private class SplayNode implements AbstractTree.Node<T> {
@@ -80,198 +76,145 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
                     splay(currentNode.right);
                     return true;
                 }
-                if (!checkParents(currentNode))
-                    System.err.println("INCORRECT PARENTS (for value " + currentNode.key + ")");
                 currentNode = currentNode.getRight();
             }
         }
         throw new IllegalStateException("Insert called with no existent value but the value has not been inserted. Value = " + element);
     }
 
-
     @Override
-    protected boolean deleteImpl(T element) {
-        SplayNode helpNode = new SplayNode(null);
-        SplayNode previous = helpNode;
-        previous.left = root;
-        boolean leftPath = true;
-        var currentNode = root;
-        while (currentNode != null) {
-            var compareResult = getComparator().compare(element, currentNode.key);
-            if (compareResult == 0) {
-                if (currentNode.right == null && currentNode.left == null) {
-                    if (leftPath) {
-                        previous.left = null;
-                    } else {
-                        previous.right = null;
-                    }
-                } else if (currentNode.left == null) { // && currentNOde.right != null
-                    if (leftPath) {
-                        previous.left = currentNode.right;
-                    } else {
-                        previous.right = currentNode.right;
-                    }
-                    currentNode.right.parent = previous;
-                } else if (currentNode.right == null) { // && currentNode.left != null
-                    if (leftPath) {
-                        previous.left = currentNode.left;
-                    } else {
-                        previous.right = currentNode.left;
-                    }
-                    currentNode.left.parent = previous;
-                } else {
-                    var minParent = findMinKeyParent(currentNode.right);
-                    if (minParent == null) {
-                        swapKeys(currentNode, currentNode.right);
-                        currentNode.right = currentNode.right.right;
-                        if (currentNode.right != null) {
-                            currentNode.right.right = currentNode;
-                        }
-                    } else {
-                        swapKeys(minParent.left, currentNode);
-                        minParent.left = minParent.left.right;
-                        if (minParent.left != null) {
-                            minParent.left.right.parent = minParent;
-                        }
-                    }
-                }
-                if (previous == helpNode) {
-                    root = previous.left;
-                }
-                splay((previous == helpNode) ? null : previous);
-                return true;
+    public boolean deleteImpl(T element) {
+        SplayNode nodeToDelete = find(element);
+        if (nodeToDelete == null) return false;
+        splay(nodeToDelete);
+        if (nodeToDelete.left == null)
+            replace(nodeToDelete, nodeToDelete.right);
+        else if (nodeToDelete.right == null)
+            replace(nodeToDelete, nodeToDelete.left);
+        else {
+            SplayNode y = findMinKeyNode(nodeToDelete.right);
+            if (y.parent != nodeToDelete) {
+                replace(y, y.right);
+                y.right = nodeToDelete.right;
+                y.right.parent = y;
             }
-            if (compareResult < 0) {
-                leftPath = true;
-                previous = currentNode;
-                currentNode = currentNode.left;
-            } else {
-                leftPath = false;
-                previous = currentNode;
-                currentNode = currentNode.right;
-            }
+            replace(nodeToDelete, y);
+            y.left = nodeToDelete.left;
+            y.left.parent = y;
         }
-        return false;
+        return true;
     }
 
     @Override
     protected boolean searchImpl(T element) {
-        var currentNode = root;
-        while (currentNode != null) {
-            var compareResult = getComparator().compare(element, currentNode.key);
-            if (compareResult == 0) {
-                splay(currentNode);
-                return true;
-            }
-            if (compareResult < 0) {
-                currentNode = currentNode.left;
-            } else {
-                currentNode = currentNode.right;
-            }
+        var findResult = find(element);
+        if (findResult == null) return false;
+        else if (!findResult.key.equals(element)) throw new IllegalStateException("Find has found wrong value.");
+        else {
+            splay(findResult);
+            return true;
         }
-        return false;
     }
 
-    private SplayNode findMinKeyParent(SplayNode startNode) {
+    private SplayNode findMinKeyNode(SplayNode startNode) {
         if (startNode.left == null) {
-            return null;
-        } else if (startNode.left.left == null) {
             return startNode;
         } else {
-            return findMinKeyParent(startNode.left);
+            return findMinKeyNode(startNode.left);
         }
     }
 
     private void splay(SplayNode node) {
-        while (node != root) {
-            if (node.parent == root) {
-                zig(node);
-            } else if (node.parent.parent.left == node.parent) {
-                if (node.parent.left == node) {
-                    zigZig(node);
-                } else {
-                    zigZag(node);
-                }
-            } else {
-                if (node.parent.right == node) {
-                    zigZig(node);
-                } else {
-                    zigZag(node);
-                }
+        if (node == null) return;
+        while (node.parent != null) {
+            if (node.parent.parent == null) {
+                if (node.parent.left == node) rightRotation(node.parent); //zig
+                else leftRotation(node.parent); //zag
+            } else if (node.parent.left == node && node.parent.parent.left == node.parent) { //zig-zig
+                rightRotation(node.parent.parent);
+                rightRotation(node.parent);
+            } else if (node.parent.right == node && node.parent.parent.right == node.parent) { //zag-zag
+                leftRotation(node.parent.parent);
+                leftRotation(node.parent);
+            } else if (node.parent.left == node && node.parent.parent.right == node.parent) { //zag-zig
+                rightRotation(node.parent);
+                leftRotation(node.parent);
+            } else { //zig-zag
+                leftRotation(node.parent);
+                rightRotation(node.parent);
             }
         }
     }
 
-    @SuppressWarnings("Duplicates")
-    private void leftRotation(SplayNode node) {
-        SplayNode grandParent = node.parent.parent;
-        SplayNode temp = node.left;
-        SplayNode parent = node.parent;
-        if (grandParent != null) {
-            if (grandParent.left == parent) {
-                grandParent.left = node;
-                node.parent = grandParent;
-            } else {
-                grandParent.right = node;
-                node.parent = grandParent;
+    private void replace(SplayNode node1, SplayNode node2) {
+        if (node1.parent == null) {
+            root = node2;
+        } else if (node1 == node1.parent.left) {
+            node1.parent.left = node2;
+        } else {
+            node1.parent.right = node2;
+        }
+        if (node2 != null) {
+            node2.parent = node1.parent;
+        }
+    }
+
+    private SplayNode find(T element) {
+        SplayNode z = root;
+        while (z != null) {
+            if (getComparator().compare(z.key, element) < 0) {
+                z = z.right;
+            } else if (getComparator().compare(element, z.key) < 0) {
+                z = z.left;
             }
-        } else {
-            root = node;
-            node.parent = null;
+            else return z;
         }
-        node.left = parent;
-        parent.parent = node;
-        if (temp != null) {
-            parent.right = temp;
-            temp.parent = parent;
-        } else {
-            parent.right = null;
-        }
+        return null;
     }
 
-    @SuppressWarnings("Duplicates")
-    private void rightRotation(SplayNode node) {
-        SplayNode grandParent = node.parent.parent;
-        SplayNode temp = node.right;
-        SplayNode parent = node.parent;
-        if (grandParent != null) {
-            if (grandParent.left == parent) {
-                grandParent.left = node;
-                node.parent = grandParent;
-            } else {
-                grandParent.right = node;
-                node.parent = grandParent;
+    private void leftRotation(SplayNode x) {
+        SplayNode y = x.right;
+        if (y != null) {
+            x.right = y.left;
+            if (y.left != null) {
+                y.left.parent = x;
             }
-        } else {
-            root = node;
-            node.parent = null;
+            y.parent = x.parent;
         }
-        node.right = parent;
-        parent.parent = node;
-        if (temp != null) {
-            parent.left = temp;
-            temp.parent = parent;
+
+        if (x.parent == null) {
+            root = y;
+        } else if (x == x.parent.left) {
+            x.parent.left = y;
         } else {
-            parent.left = null;
+            x.parent.right = y;
         }
+        if (y != null) {
+            y.left = x;
+        }
+        x.parent = y;
     }
 
-    private void zig(SplayNode node) {
-        if (node.parent.left == node) {
-            rightRotation(node);
-        } else {
-            leftRotation(node);
+    private void rightRotation(SplayNode x) {
+        SplayNode y = x.left;
+        if (y != null) {
+            x.left = y.right;
+            if (y.right != null) {
+                y.right.parent = x;
+            }
+            y.parent = x.parent;
         }
-    }
-
-    private void zigZig(SplayNode node) {
-        zig(node.parent);
-        zig(node);
-    }
-
-    private void zigZag(SplayNode node) {
-        zig(node);
-        zig(node);
+        if (x.parent == null) {
+            root = y;
+        } else if (x == x.parent.left) {
+            x.parent.left = y;
+        } else {
+            x.parent.right = y;
+        }
+        if (y != null) {
+            y.right = x;
+        }
+        x.parent = y;
     }
 
     private boolean checkParents(SplayNode node) {
