@@ -1,10 +1,11 @@
 package structures;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 class RedBlackTreePropertyViolatedException extends IllegalStateException {
-    RedBlackTreePropertyViolatedException(String m) {super(m);}
+    RedBlackTreePropertyViolatedException(String m) {
+        super(m);
+    }
 }
 
 public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
@@ -130,31 +131,32 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
     protected boolean deleteImpl(T element) {
         RBNode z = find(element);
         if (z == null) return false;
-
-        RBNode x, y;
-        if (z.left == nil || z.right == nil) {
-            y = z;
+        RBNode y = z;
+        Color yOriginalColor = y.color;
+        RBNode x;
+        if (z.left == nil) {
+            x = z.right;
+            transplant(z, z.right);
+        } else if (z.right == nil) {
+            x = z.left;
+            transplant(z, z.left);
         } else {
-            y = findMinKeyNode(z); //successor
+            y = findMinKeyNode(z.right);
+            yOriginalColor = y.color;
+            x = y.right;
+            if (y.parent == z) {
+                x.parent = y;
+            } else {
+                transplant(y, y.right);
+                y.right = z.right;
+                y.right.parent = y;
+            }
+            transplant(z, y);
+            y.left = z.left;
+            y.left.parent = y;
+            y.color = z.color;
         }
-
-        if (y.left != nil) {
-            x = y.left;
-        } else {
-           x = y.right;
-        }
-        x.parent = y.parent;
-        if (y.parent == nil) {
-            root = x;
-        } else if (y == y.parent.left) {
-            y.parent.left = x;
-        } else {
-            y.parent.right = x;
-        }
-        if (y != z) {
-            z.key = y.key;
-        }
-        if (y.color == Color.BLACK) {
+        if (yOriginalColor == Color.BLACK) {
             deleteFixup(x);
         }
         return true;
@@ -167,6 +169,31 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
         if (findResult == null) return false;
         else if (!findResult.key.equals(element)) throw new IllegalStateException("Find has found wrong value.");
         else return true;
+    }
+
+    @Override
+    protected List<T> inOrderImpl() {
+        List<T> resultList = new ArrayList<>();
+        orderNode(resultList, root);
+        return resultList;
+    }
+
+    private void orderNode(List<T> list, RBNode node) {
+        if (node == nil) return;
+        orderNode(list, node.left);
+        list.add(node.key);
+        orderNode(list, node.right);
+    }
+
+    private void transplant(RBNode u, RBNode v) {
+        if (u.parent == nil) {
+            this.root = v;
+        } else if (u == u.parent.left) {
+            u.parent.left = v;
+        } else {
+            u.parent.right = v;
+        }
+        v.parent = u.parent;
     }
 
     private RBNode find(T element) {
@@ -281,12 +308,13 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
                 if (w.left.color == Color.BLACK && w.right.color == Color.BLACK) {
                     w.color = Color.RED;
                     x = x.parent;
-                } else if (w.right.color == Color.BLACK) {
-                    w.left.color = Color.BLACK;
-                    w.color = Color.RED;
-                    rightRotate(w);
-                    w = x.parent.right;
                 } else {
+                    if (w.right.color == Color.BLACK) {
+                        w.left.color = Color.BLACK;
+                        w.color = Color.RED;
+                        rightRotate(w);
+                        w = x.parent.right;
+                    }
                     w.color = x.parent.color;
                     x.parent.color = Color.BLACK;
                     w.right.color = Color.BLACK;
@@ -304,12 +332,13 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
                 if (w.right.color == Color.BLACK && w.left.color == Color.BLACK) {
                     w.color = Color.RED;
                     x = x.parent;
-                } else if (w.left.color == Color.BLACK) {
-                    w.right.color = Color.BLACK;
-                    w.color = Color.RED;
-                    leftRotate(w);
-                    w = x.parent.left;
                 } else {
+                    if (w.left.color == Color.BLACK) {
+                        w.right.color = Color.BLACK;
+                        w.color = Color.RED;
+                        leftRotate(w);
+                        w = x.parent.left;
+                    }
                     w.color = x.parent.color;
                     x.parent.color = Color.BLACK;
                     w.left.color = Color.BLACK;
@@ -347,9 +376,10 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
 
     private int checkProperties(RBNode node) {
         if (node == nil) return 1;
-        var h1 = checkProperties(node.right);
-        var h2 = checkProperties(node.left);
-        if (h1 != h2) throw new RedBlackTreePropertyViolatedException("RB tree condition violated. Height of subtrees is different.");
+        int h1 = checkProperties(node.right);
+        int h2 = checkProperties(node.left);
+        if (h1 != h2)
+            throw new RedBlackTreePropertyViolatedException("RB tree condition violated. Height of subtrees is different. At node: " + node.toString() + " " + getNumberOfDeletions());
         if (node.color == Color.RED && (node.left.color == Color.RED || node.right.color == Color.RED))
             throw new RedBlackTreePropertyViolatedException("RB tree condition violated. Red node has a red child.");
         if (node.color == Color.BLACK)
@@ -376,11 +406,12 @@ public class RedBlackTree<T extends Comparable<T>> extends AbstractTree<T> {
             if (n != nil) {
                 nonNulls++;
             }
-            queue.add(n.left); //if (n != null)
-            queue.add(n.right);//if (n != null)
+            if (n != nil) queue.add(n.left); //if (n != null)
+            if (n != nil) queue.add(n.right);//if (n != null)
             k++;
         }
-        if (!checkCorrectness()) throw new RedBlackTreePropertyViolatedException("RedBlackTree properties are violated.");
+        if (!checkCorrectness())
+            throw new RedBlackTreePropertyViolatedException("RedBlackTree properties are violated.");
         return builder.toString();
     }
 }
