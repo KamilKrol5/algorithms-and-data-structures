@@ -65,4 +65,11 @@ public class AbstractTreeExtensions {
         System.out.println("Number of searches:" + t.getNumberOfSearches());
         System.out.println("Number of loads:" + t.getNumberOfLoads());
     }
+
+    public static long measureTime(Runnable func) {
+        long start = System.nanoTime();
+        func.run();
+        long end = System.nanoTime();
+        return end-start;
+    }
 }
