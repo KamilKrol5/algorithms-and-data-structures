@@ -57,7 +57,7 @@ public class AbstractTreeExtensions {
 
     public static <T extends Comparable<T>> void showStatistics(AbstractTree<T> t) {
         System.out.println("Current number of elements:" + t.getCurrentNumberOfElements());
-        System.out.println("Maximum number of :" + t.getMaximumNumberOfElements());
+        System.out.println("Maximum number of elements:" + t.getMaximumNumberOfElements());
         System.out.println("Number of comparisons:" + t.getNumberOfComparisons());
         System.out.println("Number of inserts:" + t.getNumberOfInserts());
         System.out.println("Number of deletions:" + t.getNumberOfDeletions());

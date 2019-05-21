@@ -64,8 +64,7 @@ public class TreeInputHandler {
                     printStream.println("Number of loads:" + tree.getNumberOfLoads());
                     break;
                 case "exit":
-                    System.exit(0);
-                    break;
+                    return;
                 default:
                     printStream.println("Wrong operation.");
             }
