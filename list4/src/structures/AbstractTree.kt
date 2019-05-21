@@ -31,6 +31,8 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
         private set
     var numberOfInOrders: Long = 0
         private set
+    var numberOfNodeModifications: Long = 0
+        private set
     val numberOfComparisons get() = comparator.count
 
     private fun updateNumberOfElements(change: Long) {
@@ -39,30 +41,34 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
             maximumNumberOfElements = currentNumberOfElements
     }
 
+    fun updateNumberOfNodeModifications(x: Long) {
+        numberOfNodeModifications += x
+    }
+
     fun resetStatistics() {
-        maximumNumberOfElements= 0
-        currentNumberOfElements= 0
-        numberOfInserts= 0
-        numberOfDeletions= 0
-        numberOfSearches= 0
-        numberOfLoads= 0
-        numberOfInOrders= 0
+        maximumNumberOfElements = 0
+        numberOfInserts = 0
+        numberOfDeletions = 0
+        numberOfSearches = 0
+        numberOfLoads = 0
+        numberOfInOrders = 0
+        numberOfNodeModifications = 0
         comparator.resetCount()
     }
 
     final override fun insert(element: T) {
+        numberOfInserts++
         if (insertImpl(element)) {
             updateNumberOfElements(1)
-            numberOfInserts++
         }
     }
 
     protected abstract fun insertImpl(element: T): Boolean
 
     final override fun delete(element: T) {
+        numberOfDeletions++
         if (deleteImpl(element)) {
             updateNumberOfElements(-1)
-            numberOfDeletions++
         }
     }
 
@@ -153,5 +159,6 @@ abstract class AbstractTree<T : Comparable<T>> : Tree<T> {
         val tmp = node1.key
         node1.key = node2.key
         node2.key = tmp
+        updateNumberOfNodeModifications(2)
     }
 }
