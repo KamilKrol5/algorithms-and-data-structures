@@ -40,6 +40,22 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
         @Override
         public void setKey(T t) {
             this.key = t;
+            updateNumberOfNodeModifications(1);
+        }
+
+        public void setLeft(SplayNode node) {
+            left = node;
+            updateNumberOfNodeModifications(1);
+        }
+
+        public void setRight(SplayNode node) {
+            right = node;
+            updateNumberOfNodeModifications(1);
+        }
+
+        public void setParent(SplayNode node) {
+            parent = node;
+            updateNumberOfNodeModifications(1);
         }
     }
 
@@ -54,6 +70,7 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
     protected boolean insertImpl(T element) {
         if (root == null) {
             root = new SplayNode(element);
+            updateNumberOfNodeModifications(1);
             return true;
         }
         SplayNode currentNode = root;
@@ -65,14 +82,14 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
             }
             if (compareResult < 0) {
                 if (currentNode.left == null) {
-                    currentNode.left = new SplayNode(element, currentNode);
+                    currentNode.setLeft(new SplayNode(element, currentNode));
                     splay(currentNode.left);
                     return true;
                 }
                 currentNode = currentNode.getLeft();
             } else {
                 if (currentNode.right == null) {
-                    currentNode.right = new SplayNode(element, currentNode);
+                    currentNode.setRight(new SplayNode(element, currentNode));
                     splay(currentNode.right);
                     return true;
                 }
@@ -95,12 +112,12 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
             SplayNode y = findMinKeyNode(nodeToDelete.right);
             if (y.parent != nodeToDelete) {
                 replace(y, y.right);
-                y.right = nodeToDelete.right;
-                y.right.parent = y;
+                y.setRight(nodeToDelete.right);
+                y.right.setParent(y);
             }
             replace(nodeToDelete, y);
-            y.left = nodeToDelete.left;
-            y.left.parent = y;
+            y.setLeft(nodeToDelete.left);
+            y.left.setParent(y);
         }
         return true;
     }
@@ -149,13 +166,14 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
     private void replace(SplayNode node1, SplayNode node2) {
         if (node1.parent == null) {
             root = node2;
+            updateNumberOfNodeModifications(1);
         } else if (node1 == node1.parent.left) {
-            node1.parent.left = node2;
+            node1.parent.setLeft(node2);
         } else {
-            node1.parent.right = node2;
+            node1.parent.setRight(node2);
         }
         if (node2 != null) {
-            node2.parent = node1.parent;
+            node2.setParent(node1.parent);
         }
     }
 
@@ -166,8 +184,7 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
                 z = z.right;
             } else if (getComparator().compare(element, z.key) < 0) {
                 z = z.left;
-            }
-            else return z;
+            } else return z;
         }
         return null;
     }
@@ -175,46 +192,48 @@ public class SplayTree<T extends Comparable<T>> extends AbstractTree<T> {
     private void leftRotation(SplayNode x) {
         SplayNode y = x.right;
         if (y != null) {
-            x.right = y.left;
+            x.setRight(y.left);
             if (y.left != null) {
-                y.left.parent = x;
+                y.left.setParent(x);
             }
-            y.parent = x.parent;
+            y.setParent(x.parent);
         }
 
         if (x.parent == null) {
             root = y;
+            updateNumberOfNodeModifications(1);
         } else if (x == x.parent.left) {
-            x.parent.left = y;
+            x.parent.setLeft(y);
         } else {
-            x.parent.right = y;
+            x.parent.setRight(y);
         }
         if (y != null) {
-            y.left = x;
+            y.setLeft(x);
         }
-        x.parent = y;
+        x.setParent(y);
     }
 
     private void rightRotation(SplayNode x) {
         SplayNode y = x.left;
         if (y != null) {
-            x.left = y.right;
+            x.setLeft(y.right);
             if (y.right != null) {
-                y.right.parent = x;
+                y.right.setParent(x);
             }
-            y.parent = x.parent;
+            y.setParent(x.parent);
         }
         if (x.parent == null) {
             root = y;
+            updateNumberOfNodeModifications(1);
         } else if (x == x.parent.left) {
-            x.parent.left = y;
+            x.parent.setLeft(y);
         } else {
-            x.parent.right = y;
+            x.parent.setRight(y);
         }
         if (y != null) {
-            y.right = x;
+            y.setRight(x);
         }
-        x.parent = y;
+        x.setParent(y);
     }
 
     private boolean checkParents(SplayNode node) {

@@ -1,9 +1,5 @@
 package structures;
 
-import java.io.*;
-import java.util.Scanner;
-import java.util.function.Function;
-
 public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
 
     private class BSTNode implements Node<T> {
@@ -38,6 +34,17 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
         @Override
         public void setKey(T t) {
             this.key = t;
+            updateNumberOfNodeModifications(1);
+        }
+
+        public void setLeft(BSTNode node) {
+            left = node;
+            updateNumberOfNodeModifications(1);
+        }
+
+        public void setRight(BSTNode node) {
+            right = node;
+            updateNumberOfNodeModifications(1);
         }
     }
 
@@ -57,6 +64,7 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
     protected boolean insertImpl(T element) {
         if (root == null) {
             root = new BSTNode(element);
+            updateNumberOfNodeModifications(1);
             return true;
         }
         BSTNode currentNode = root;
@@ -67,13 +75,13 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
             }
             if (compareResult < 0) {
                 if (currentNode.left == null) {
-                    currentNode.left = new BSTNode(element);
+                    currentNode.setLeft(new BSTNode(element));
                     return true;
                 }
                 currentNode = currentNode.getLeft();
             } else {
                 if (currentNode.right == null) {
-                    currentNode.right = new BSTNode(element);
+                    currentNode.setRight(new BSTNode(element));
                     return true;
                 }
                 currentNode = currentNode.getRight();
@@ -86,7 +94,7 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
     protected boolean deleteImpl(T element) {
         BSTNode helpNode = new BSTNode(null);
         BSTNode previous = helpNode;
-        previous.left = root;
+        previous.setLeft(root);
         boolean leftPath = true;
         var currentNode = root;
         while (currentNode != null) {
@@ -94,35 +102,35 @@ public class BSTree<T extends Comparable<T>> extends AbstractTree<T> {
             if (compareResult == 0) {
                 if (currentNode.right == null && currentNode.left == null) {
                     if (leftPath) {
-                        previous.left = null;
+                        previous.setLeft(null);
                     } else {
-                        previous.right = null;
+                        previous.setRight(null);
                     }
                 } else if (currentNode.left == null) { // && currentNOde.right != null
                     if (leftPath) {
-                        previous.left = currentNode.right;
+                        previous.setLeft(currentNode.right);
                     } else {
-                        previous.right = currentNode.right;
+                        previous.setRight(currentNode.right);
                     }
                 } else if (currentNode.right == null) { // && currentNode.left != null
                     if (leftPath) {
-                        previous.left = currentNode.left;
+                        previous.setLeft(currentNode.left);
                     } else {
-                        previous.right = currentNode.left;
+                        previous.setRight(currentNode.left);
                     }
                 } else {
                     var minParent = findMinKeyParent(currentNode.right);
                     if (minParent == null) {
                         swapKeys(currentNode, currentNode.right);
-                        currentNode.right = currentNode.right.right;
+                        currentNode.setRight(currentNode.right.right);
                     } else {
                         swapKeys(minParent.left, currentNode);
-                        minParent.left = minParent.left.right;
+                        minParent.setLeft(minParent.left.right);
                     }
-
                 }
                 if (previous == helpNode) {
                     root = previous.left;
+                    updateNumberOfNodeModifications(1);
                 }
                 return true;
             }
