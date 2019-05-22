@@ -58,6 +58,7 @@ public class TreeInputHandler {
                     printStream.println("Current number of elements:" + tree.getCurrentNumberOfElements());
                     printStream.println("Maximum number of :" + tree.getMaximumNumberOfElements());
                     printStream.println("Number of comparisons:" + tree.getNumberOfComparisons());
+                    System.out.println("Number of modifications:" + tree.getNumberOfNodeModifications());
                     printStream.println("Number of inserts:" + tree.getNumberOfInserts());
                     printStream.println("Number of deletions:" + tree.getNumberOfDeletions());
                     printStream.println("Number of inOrder calls:" + tree.getNumberOfInOrders());
