@@ -1,9 +1,12 @@
 package graphs;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class DirectedGraph implements Graph{
-    private Map<Vertex,List<GraphEdge>> edges;
+public class DirectedGraph implements Graph {
+    private Map<Vertex, List<GraphEdge>> edges;
     private List<Vertex> verticesList;
     private List<GraphEdge> edgesList;
 
@@ -33,7 +36,7 @@ public class DirectedGraph implements Graph{
 
     @Override
     public void removeEdge(GraphEdge edge) {
-        for (List<GraphEdge> neighbours: edges.values()) {
+        for (List<GraphEdge> neighbours : edges.values()) {
             for (GraphEdge edge1 : neighbours) {
                 if (edge1.equals(edge)) {
                     neighbours.remove(edge);
