@@ -1,11 +1,17 @@
 package graphs;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public interface Graph {
-    public void addEdge(GraphEdge edge);
-    public void removeEdge(GraphEdge edge);
-    public Map<Vertex, List<GraphEdge>> getEdges();
-    public int getVerticesCount();
+    void addEdge(GraphEdge edge);
+    void removeEdge(GraphEdge edge);
+    Map<Vertex, List<GraphEdge>> getEdges();
+    int getVerticesCount();
+    default void addEdges(Collection<GraphEdge> edges) {
+        for (var e : edges) {
+            addEdge(e);
+        }
+    }
 }
