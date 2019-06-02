@@ -3,10 +3,8 @@ package algorithms;
 import graphs.DirectedGraph;
 import graphs.GraphEdge;
 import graphs.Vertex;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+
+import java.util.*;
 
 public class EdmondsKarp {
 
@@ -30,11 +28,13 @@ public class EdmondsKarp {
     }
 
     private void createReverseEdges() {
+        List<GraphEdge> graphEdgesToAdd = new ArrayList<>();
         for (var edge : graph.getEdgesList()) {
             var reversedEdge = new GraphEdge(edge.getEnd(), edge.getStart(), 0, 0, edge);
             edge.setReversedEdge(reversedEdge);
-            graph.addEdge(reversedEdge);
+            graphEdgesToAdd.add(reversedEdge);
         }
+        graph.addEdges(graphEdgesToAdd);
     }
 
     public Integer maxFlow() {
@@ -53,15 +53,10 @@ public class EdmondsKarp {
                         predessesors.put(e.getEnd(), e);
                         queue.add(e.getEnd());
                     }
-                    GraphEdge reversedE = e.getReversedEdge();
-                    if (predessesors.get(reversedE.getEnd()) == null && reversedE.getEnd() != source && reversedE.getCapacity() > reversedE.getFlow()) {
-                        predessesors.put(reversedE.getEnd(), reversedE);
-                        queue.add(reversedE.getEnd());
-                    }
                 }
             }
 
-            if (predessesors.get(destination) == null) {
+            if (predessesors.get(destination) != null) {
 //                We found an augmenting path. See how much flow we can send
                 var deltaFlow = Integer.MAX_VALUE - 1;
                 for (var e = predessesors.get(destination); e != null; e = predessesors.get(e.getStart())) {
@@ -71,11 +66,10 @@ public class EdmondsKarp {
                 for (var e = predessesors.get(destination); e != null; e = predessesors.get(e.getStart())) {
                     e.setFlow(e.getFlow() + deltaFlow);
                     e.getReversedEdge().setFlow(e.getReversedEdge().getFlow() - deltaFlow);
-                    maxFlow = maxFlow + deltaFlow;
                 }
+                maxFlow = maxFlow + deltaFlow;
             }
         } while (predessesors.get(destination) != null);
-
         return maxFlow;
     }
 }

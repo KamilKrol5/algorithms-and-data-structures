@@ -14,6 +14,14 @@ public class GraphEdge {
         this.reversedEdge = reversedEdge;
     }
 
+    public GraphEdge(Vertex start, Vertex end, Integer capacity, Integer flow) {
+        this.start = start;
+        this.end = end;
+        this.capacity = capacity;
+        this.flow = flow;
+        this.reversedEdge = null;
+    }
+
     public Vertex getEnd() {
         return end;
     }
