@@ -9,14 +9,15 @@ public class MainHybercube {
         if (args[0].equals("--size")) {
             try {
                 int size = Integer.parseInt(args[1]);
-                if (size <= 0) System.out.println("Size must be a positive number");
+                if (size <= 0 || size > 16) System.out.println("Size must be a positive number between 1 and 16");
                 HypercubeGraphGenerator hypercubeGraph = new HypercubeGraphGenerator(size);
                 EdmondsKarp edmondsKarp = new EdmondsKarp(hypercubeGraph.getHybercubeGraph(), new Vertex(0), new Vertex((1 << size) - 1));
                 System.out.println("Size is: "+size);
-                System.out.println(hypercubeGraph.getHybercubeGraph().toString());
+//                System.out.println(hypercubeGraph.getHybercubeGraph().toString());
                 long startTime = System.nanoTime();
                 System.out.println("Max flow is: " + edmondsKarp.maxFlow());
                 long endTime = System.nanoTime();
+                System.out.println("Number of augmenting paths: " + edmondsKarp.getAugmentingPathCount());
                 System.out.println("Time: "+ (endTime - startTime) / 1_000_000.0 + "ms");
 
             } catch (IllegalArgumentException e) {

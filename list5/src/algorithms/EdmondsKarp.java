@@ -11,6 +11,7 @@ public class EdmondsKarp {
     private final DirectedGraph graph;
     private final Vertex source;
     private final Vertex destination;
+    private int augmentingPathCount = 0;
 
     public EdmondsKarp(DirectedGraph graph, Vertex source, Vertex destination) {
         this.graph = graph;
@@ -69,7 +70,12 @@ public class EdmondsKarp {
                 }
                 maxFlow = maxFlow + deltaFlow;
             }
+            augmentingPathCount++;
         } while (predessesors.get(destination) != null);
         return maxFlow;
+    }
+
+    public int getAugmentingPathCount() {
+        return augmentingPathCount;
     }
 }
