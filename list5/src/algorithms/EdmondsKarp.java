@@ -49,7 +49,7 @@ public class EdmondsKarp {
             while (!queue.isEmpty()) {
                 Vertex current = queue.remove();
                 for (GraphEdge e : graph.getEdges().get(current)) {
-                    if (predessesors.get(e.getEnd()) == null && e.getEnd() != source && e.getCapacity() > e.getFlow()) {
+                    if (predessesors.get(e.getEnd()) == null && !e.getEnd().equals(source) && e.getCapacity() > e.getFlow()) {
                         predessesors.put(e.getEnd(), e);
                         queue.add(e.getEnd());
                     }
