@@ -10,17 +10,16 @@ import java.io.PrintWriter;
 public class MainHybercube {
 
     public static void main(String[] args) {
-        if (args.length < 1) throw new IllegalArgumentException("Missing argument. Valid argument is --size k OR --glpkall OR --size k --glpk");
+        if (args.length < 1)
+            throw new IllegalArgumentException("Missing argument. Valid argument is --size k OR --glpkall OR --size k --glpk");
         else if (args[0].equals("--glpkall")) {
-            try {
-                for (int k = 1; k <= 16; k++) {
-                    prepareGlpkFile(k);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (int k = 1; k <= 16; k++) {
+                HypercubeGraphGenerator hypercubeGraph = new HypercubeGraphGenerator(k);
+                prepareGlpkFile(k, hypercubeGraph);
             }
         }
-        if (args.length < 2) throw new IllegalArgumentException("Missing argument. Valid argument is --size k OR --glpkall OR --size k --glpk");
+        if (args.length < 2)
+            throw new IllegalArgumentException("Missing argument. Valid argument is --size k OR --glpkall OR --size k --glpk");
         if (args[0].equals("--size")) {
             try {
                 int size = Integer.parseInt(args[1]);
@@ -29,7 +28,8 @@ public class MainHybercube {
                     return;
                 }
                 if (args.length == 3 && args[2].equals("--glpk")) {
-                    prepareGlpkFile(size);
+                    HypercubeGraphGenerator hypercubeGraph = new HypercubeGraphGenerator(size);
+                    prepareGlpkFile(size, hypercubeGraph);
                 } else {
                     HypercubeGraphGenerator hypercubeGraph = new HypercubeGraphGenerator(size);
                     EdmondsKarp edmondsKarp = new EdmondsKarp(hypercubeGraph.getHybercubeGraph(), new Vertex(0), new Vertex((1 << size) - 1));
@@ -43,14 +43,11 @@ public class MainHybercube {
                 }
             } catch (IllegalArgumentException e) {
                 System.out.println("Size must be a positive number");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
-    private static void prepareGlpkFile(int size) throws IOException {
-        HypercubeGraphGenerator hypercubeGraph = new HypercubeGraphGenerator(size);
+    static void prepareGlpkFile(int size, HypercubeGraphGenerator hypercubeGraph) {
         try (var writer = new PrintWriter(new FileWriter("hypercubeGLPK" + size + ".mod"))) {
             writer.print("data;\n");
             writer.print("param n := ");
@@ -67,6 +64,8 @@ public class MainHybercube {
                 writer.print(e.getCapacity());
             }
             writer.print(";\n\nend;\n");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
