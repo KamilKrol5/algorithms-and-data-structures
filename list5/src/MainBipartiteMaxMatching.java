@@ -12,14 +12,11 @@ public class MainBipartiteMaxMatching {
         if (args.length < 1)
             throw new IllegalArgumentException("Missing argument. Valid arguments are: --size k --degree i OR --glpkall OR --size k --degree i --glpk");
         else if (args[0].equals("--glpkall")) {
-            try {
-                for (int k = 3; k <= 16; k++) {
-                    for (int i = 1; i <= k; i++) {
-                        prepareGlpkFile(k, i);
-                    }
+            for (int k = 3; k <= 16; k++) {
+                for (int i = 1; i <= k; i++) {
+                    BipartiteGraphGenerator generator = new BipartiteGraphGenerator(k, i);
+                    prepareGlpkFile(k, i, generator);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         if (args.length < 4)
@@ -41,7 +38,8 @@ public class MainBipartiteMaxMatching {
                     return;
                 }
                 if (args.length == 5 && args[4].equals("--glpk")) {
-                    prepareGlpkFile(size, degree);
+                    BipartiteGraphGenerator generator = new BipartiteGraphGenerator(size, degree);
+                    prepareGlpkFile(size, degree, generator);
                 } else {
                     BipartiteGraphGenerator generator = new BipartiteGraphGenerator(size, degree);
                     DirectedGraph graph = generator.getBipartiteGraph();
@@ -55,15 +53,12 @@ public class MainBipartiteMaxMatching {
 
             } catch (IllegalArgumentException e) {
                 System.out.println("Size and degree must be positive numbers.");
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
     @SuppressWarnings("Duplicates")
-    private static void prepareGlpkFile(int size, int degree) throws IOException {
-        BipartiteGraphGenerator generator = new BipartiteGraphGenerator(size, degree);
+    static void prepareGlpkFile(int size, int degree, BipartiteGraphGenerator generator) {
         DirectedGraph graph = generator.getBipartiteGraph();
         try (var writer = new PrintWriter(new FileWriter("maxMatchingGLPK-size-" + size + "-deg" + degree + ".mod"))) {
             writer.print("data;\n");
@@ -85,6 +80,8 @@ public class MainBipartiteMaxMatching {
                 writer.print(e.getCapacity());
             }
             writer.print(";\n\nend;\n");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

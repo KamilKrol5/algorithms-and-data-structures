@@ -51,7 +51,7 @@ public class MainHybercubeStatistics {
     public static void compareWithGLPK() throws InterruptedException {
         var executor = Executors.newFixedThreadPool(5);
         List<Future<?>> futures = new ArrayList<>(32);
-        try (var writer = new PrintWriter(new FileWriter("comparingWithGLPK-results.txt"))) {
+        try (var writer = new PrintWriter(new FileWriter("comparingMaxFlowWithGLPK-results.txt"))) {
             for (int size = 1; size <= 16; size++) {
                 HypercubeGraphGenerator hypercubeGraphGenerator = new HypercubeGraphGenerator(size);
                 DirectedGraph hypercubeGraph = hypercubeGraphGenerator.getHybercubeGraph();
@@ -62,9 +62,9 @@ public class MainHybercubeStatistics {
                     Integer res = edmondsKarp.maxFlow();
                     long end = System.nanoTime();
                     synchronized (writer) {
-                        writer.append("for k=" + sizee + " max flow is: ");
+                        writer.append("for k=").append(String.valueOf(sizee)).append(" max flow is: ");
                         writer.append(res.toString());
-                        writer.append(" (time: " + (end-start) / 1_000_000 + "ms)\n");
+                        writer.append(" (time: ").append(String.valueOf((end - start) / 1_000_000)).append("ms)\n");
                     }
                 };
                 Runnable glpkRunnable = () -> {
@@ -78,7 +78,7 @@ public class MainHybercubeStatistics {
                         String line;
 
                         synchronized (writer) {
-                            writer.append("\nfor k=" + sizee + " max flow according to GLPK is: \n");
+                            writer.append("\nfor k=").append(String.valueOf(sizee)).append(" max flow according to GLPK is: \n");
                             while ((line = br.readLine()) != null) {
                                 writer.append(line);
                                 writer.append("\n");
