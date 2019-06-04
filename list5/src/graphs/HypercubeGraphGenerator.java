@@ -53,6 +53,10 @@ public class HypercubeGraphGenerator {
         return directedGraph;
     }
 
+    public DirectedGraph getCopyOfHypercubeGraph() {
+        return new DirectedGraph(new ArrayList<>(directedGraph.getEdges().keySet()), new ArrayList<>(directedGraph.getEdgesList()));
+    }
+
     private int computeHammingWeight(int number) {
         int count = 0;
         while (number != 0) {
