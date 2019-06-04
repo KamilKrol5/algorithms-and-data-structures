@@ -53,7 +53,7 @@ public class MainHybercube {
             writer.print("param n := ");
             writer.print(1 << size);
             writer.print(";\n\nparam : E :   a :=");
-            System.out.println(hypercubeGraph.getHybercubeGraph().toString());
+            //System.out.println(hypercubeGraph.getHybercubeGraph().toString());
             var edges = hypercubeGraph.getHybercubeGraph().getEdgesList();
             for (GraphEdge e : edges) {
                 writer.print("\n");

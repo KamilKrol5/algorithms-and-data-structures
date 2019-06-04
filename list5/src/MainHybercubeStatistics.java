@@ -1,10 +1,15 @@
 import algorithms.EdmondsKarp;
+import graphs.DirectedGraph;
 import graphs.HypercubeGraphGenerator;
 import graphs.Vertex;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 
 public class MainHybercubeStatistics {
@@ -36,8 +41,71 @@ public class MainHybercubeStatistics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
+
+//    public static void main(String[] args) throws InterruptedException {
+//        compareWithGLPK();
+//    }
+
+    public static void compareWithGLPK() throws InterruptedException {
+        var executor = Executors.newFixedThreadPool(5);
+        List<Future<?>> futures = new ArrayList<>(32);
+        try (var writer = new PrintWriter(new FileWriter("comparingWithGLPK-results.txt"))) {
+            for (int size = 1; size <= 16; size++) {
+                HypercubeGraphGenerator hypercubeGraphGenerator = new HypercubeGraphGenerator(size);
+                DirectedGraph hypercubeGraph = hypercubeGraphGenerator.getHybercubeGraph();
+                final int sizee = size;
+                Runnable myProgram = () -> {
+                    EdmondsKarp edmondsKarp = new EdmondsKarp(hypercubeGraphGenerator.getCopyOfHypercubeGraph(), new Vertex(0), new Vertex((1 << sizee) - 1));
+                    long start = System.nanoTime();
+                    Integer res = edmondsKarp.maxFlow();
+                    long end = System.nanoTime();
+                    synchronized (writer) {
+                        writer.append("for k=" + sizee + " max flow is: ");
+                        writer.append(res.toString());
+                        writer.append(" (time: " + (end-start) / 1_000_000 + "ms)\n");
+                    }
+                };
+                Runnable glpkRunnable = () -> {
+                    MainHybercube.prepareGlpkFile(sizee, hypercubeGraphGenerator);
+                    Process process = null;
+                    try {
+                        process = new ProcessBuilder("glpsol.exe", "--model", "maxflow.mod", "--data", "hypercubeGLPK" + sizee + ".mod").start();
+                        InputStream is = process.getInputStream();
+                        InputStreamReader isr = new InputStreamReader(is);
+                        BufferedReader br = new BufferedReader(isr);
+                        String line;
+
+                        synchronized (writer) {
+                            writer.append("\nfor k=" + sizee + " max flow according to GLPK is: \n");
+                            while ((line = br.readLine()) != null) {
+                                writer.append(line);
+                                writer.append("\n");
+                            }
+                            writer.append("\n");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                };
+
+                futures.add(executor.submit(myProgram));
+                futures.add(executor.submit(glpkRunnable));
+            }
+            for (Future<?> f : futures) {
+                try {
+                    f.get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        executor.shutdown();
+        executor.awaitTermination(-1, TimeUnit.DAYS);
+    }
+
 }
