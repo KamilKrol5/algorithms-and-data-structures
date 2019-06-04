@@ -46,8 +46,8 @@ public class BipartiteGraphGenerator {
         }
 
         //create additional source and sink vertices
-        start = new Vertex(-1);
-        end = new Vertex(-2);
+        start = new Vertex(2*verticesInSubgraphCount);
+        end = new Vertex(2*verticesInSubgraphCount + 1);
 
         //connect start and end with v1 and v2 respectively
         for (Vertex v1v : v1) {
